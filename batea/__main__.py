@@ -17,7 +17,7 @@
 
 
 import click
-from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel, MatrixOutput
+from .core import NmapReportParser, NmapReport, CSVFileParser, QualysReportParser, JsonOutput, BateaModel, MatrixOutput
 from defusedxml import ElementTree
 from batea import build_report
 
@@ -48,6 +48,10 @@ def main(*, scan_reports, input_format, dump_model, load_model,
     try:
         if input_format == 'nmap':
             xml_parser = NmapReportParser()
+            for file in scan_reports:
+                report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+        if input_format == 'qualys':
+            xml_parser = QualysReportParser()
             for file in scan_reports:
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
         if input_format == 'csv':

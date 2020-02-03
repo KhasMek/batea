@@ -17,6 +17,7 @@
 
 from .nmap_parser import NmapReportParser
 from .csv_parser import CSVFileParser
+from .qualys_parser import QualysReportParser
 from .report import NmapReport, Host, Port
 from .output_manager import JsonOutput, MatrixOutput
 from .model import BateaModel
