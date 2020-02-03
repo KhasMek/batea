@@ -53,16 +53,19 @@ $ pytest
 ## Example usage
 
 ```bash
-# simple use (output top 5 gold nuggets with default format)
+# Simple nmap use (output top 5 gold nuggets with default format)
 $ batea nmap_report.xml
 
-# Output top 3
+# Simple Qualys use (same as above but with a Qualys generated report)
+$ batea -f qualys qualys_report.xml
+
+# Output top 3 from nmap report
 $ batea -n 3 nmap_report.xml
 
-# Output all assets
+# Output all assets from nmap report
 $ batea -A nmap_report.xml
 
-# Using multiple input files
+# Using multiple nmap input files
 $ batea -A nmap_report1.xml nmap_report2.xml
 
 # Using wildcards (default xsl)
