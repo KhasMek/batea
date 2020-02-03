@@ -62,6 +62,7 @@ def main(*, scan_reports, input_format, dump_model, load_model,
             for file in read_xml:
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
         if read_csv:
+            csv_parser = CSVFileParser()
             for file in read_csv:
                 report.hosts.extend([host for host in csv_parser.load_hosts(file)])
     except (UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
