@@ -29,35 +29,37 @@ from batea import build_report
 @click.option("-A", "--output-all", is_flag=True)
 @click.option("-L", "--load-model", type=click.File('rb'), default=None)
 @click.option("-D", "--dump-model", type=click.File('wb'), default=None)
-@click.option("-f", "--input-format", type=str, default='xml')
+@click.option("-f", "--input-format", type=str, default='nmap')
 @click.option('-v', '--verbose', count=True)
 @click.option('-oM', "--output-matrix", type=click.File('w'), default=None)
-@click.argument("nmap_reports", type=click.File('r'), nargs=-1)
-def main(*, nmap_reports, input_format, dump_model, load_model,
+@click.argument("scan_reports", type=click.File('r'), nargs=-1)
+def main(*, scan_reports, input_format, dump_model, load_model,
          output_all, read_csv, read_xml, n_output, verbose, output_matrix):
     """Context-driven asset ranking based using anomaly detection"""
 
     report = build_report()
-    csv_parser = CSVFileParser()
-    xml_parser = NmapReportParser()
+    csv_parser = None
+    xml_parser = None
     if output_matrix:
         output_manager = MatrixOutput(output_matrix)
     else:
         output_manager = JsonOutput(verbose)
 
     try:
-        if input_format == 'xml':
-            for file in nmap_reports:
+        if input_format == 'nmap':
+            xml_parser = NmapReportParser()
+            for file in scan_reports:
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
         if input_format == 'csv':
-            for file in nmap_reports:
-                report.hosts.extend([host for host in csv_parser.load_hosts(file)])
-        if read_csv:
-            for file in read_csv:
+            csv_parser = CSVFileParser()
+            for file in scan_reports:
                 report.hosts.extend([host for host in csv_parser.load_hosts(file)])
         if read_xml:
             for file in read_xml:
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+        if read_csv:
+            for file in read_csv:
+                report.hosts.extend([host for host in csv_parser.load_hosts(file)])
     except (UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
         output_manager.log_parse_error(e)
         raise SystemExit
